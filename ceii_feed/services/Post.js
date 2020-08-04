@@ -11,7 +11,7 @@ service.verifyCreateFields = ({ title,description, image,user})=>{
 
     if(!title || !user){
         serviceResponse = {
-            success:true,
+            success:false,
             content:{
                 error:"empty fields!"
             }
@@ -56,7 +56,7 @@ service.create = async({ title,description, image,user})=>{
         serviceResponse ={
             success:false,
             content:{
-                msg:"internal server error"
+                msg:"internal servber error"
             }
         }
     }finally{
