@@ -112,4 +112,28 @@ service.findAll = async(page,limit)=>{
     }
 };
 
+service.addLike = async(post)=>{
+    let serviceResponse = {
+        success:true,
+        content:{
+            message:"Post Liked"
+        }
+    };
+    try {
+        post.likes += 1;
+        const postUpdated = await post.save();
+        if(!postUpdated){
+            serviceResponse={
+                success:false,
+                content:{
+                    message:"post not liked u.u"
+                }
+            };
+        }
+        return serviceResponse;
+    } catch (error) {
+        throw new Error("Internal Server Error :c");
+    }
+}
+
 module.exports = service;

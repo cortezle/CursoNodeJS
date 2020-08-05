@@ -39,8 +39,41 @@ controller.findOneById = async(req,res)=>{
 
 controller.findAll = async(req,res)=>{
 	const {page=0,limit=10}=req.query;
-
+	if(!verif)
+	try {
+		const postsResponse = await PostService.findAll(parseInt(page),parseInt(limit));
+		res.status(200).json(postsResponse.content);
+	} catch (error) {
+		return res.status(500).json({
+			error: error.message
+		})
+	}
 };
 
+controller.addLike = async()=>{
+	const{_id}= req.body;
+	if(!verifyID(_id)){
+		return res.status(400).json({
+			error:"error in the ID"
+		});
+	}
+	try {
+		const postExists = await  PostService.findOneById(_id);
+		if(!postExists){
+			return res.status(404).json(postExists.content);
+		}
+		const likeAdded = await PostService.addLike(postExists.content);
+		if(!likeAdded){
+			return res.status(409).json(likeAdded.content);
+		}
+		return res.status(200).json(likeAdded.content);
+		
+
+	} catch (error) {
+		return res.status(500).json({
+			error: error.message
+		});
+	}
+};
 
 module.exports = controller;
