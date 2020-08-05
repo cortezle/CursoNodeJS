@@ -1,5 +1,6 @@
 const PostService = require("../../services/Post");
 const {verifyID } = require("../../utils/MongoUtils");
+const {verifyTypeNumber}= require("../../utils/MisUtils")
 const controller = {};
 
 controller.create = async (req, res) => { 
@@ -39,7 +40,12 @@ controller.findOneById = async(req,res)=>{
 
 controller.findAll = async(req,res)=>{
 	const {page=0,limit=10}=req.query;
-	if(!verif)
+
+	if(!verifyTypeNumber(page,limit)){
+		return res.status(400).json({
+			error:"Mistype in query"
+		});
+	}
 	try {
 		const postsResponse = await PostService.findAll(parseInt(page),parseInt(limit));
 		res.status(200).json(postsResponse.content);
@@ -50,7 +56,7 @@ controller.findAll = async(req,res)=>{
 	}
 };
 
-controller.addLike = async()=>{
+controller.addLike = async(req,res)=>{
 	const{_id}= req.body;
 	if(!verifyID(_id)){
 		return res.status(400).json({
