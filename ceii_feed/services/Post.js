@@ -52,16 +52,64 @@ service.create = async({ title,description, image,user})=>{
                 }
             }
         }
-    } catch (error) {
-        serviceResponse ={
-            success:false,
-            content:{
-                msg:"internal servber error"
-            }
-        }
-    }finally{
         return serviceResponse;
+    } catch (error) {
+        throw new Error("internal server error");
     }
 }
+
+
+service.findOneById = async(_id)=>{
+    let serviceResponse = {
+        success:true,
+        content:{
+            message:"post  found :'D"
+        }
+    };
+
+    try {
+        const post = await PostModel.findById(_id).exec();
+        if(!post){
+            serviceResponse={
+                success:false,
+                content:{
+                    error:"post not found"
+                }
+            };
+        }else{
+            serviceResponse.content = post;
+        }
+        return serviceResponse;
+    } catch (error) {
+        throw new Error("Internal server error");
+    }
+};
+
+service.findAll = async(page,limit)=>{
+    let serviceResponse = {
+        success:true,
+        content:{
+        }
+    }
+    try {
+        const posts = await PostModel.find({},undefined,{
+            skip:page*limit,
+            limit: limit,
+            sort: [{
+                updatedAt:-1
+            }]
+        }).exec();
+
+        serviceResponse.content={
+            posts,
+            count: posts.length,
+            page,
+            limit
+        }
+        return serviceResponse;
+    } catch (error) {
+        return new Error("Internal server error");
+    }
+};
 
 module.exports = service;
