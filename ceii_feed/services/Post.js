@@ -1,6 +1,6 @@
 const service = {};
 const PostModel = require("../models/Post");
-
+const debg = require("debug")("log");
 service.verifyCreateFields = ({ title,description, image,user})=>{
     let serviceResponse = {
         success:true,
@@ -25,6 +25,29 @@ service.verifyCreateFields = ({ title,description, image,user})=>{
 
      return serviceResponse;
 }
+
+service.verifyUpdateFields = ({title,description,image})=>{
+    let serviceResponse={
+        success:true,
+        content:{
+        }
+    }
+    if(!title && !description && !image){
+        serviceResponse={
+            success:false,
+            content:{
+                error:"All fields are empty :v !"
+            }
+        }
+        return serviceResponse;
+    }
+    
+
+    if(title) serviceResponse.content.title = title;
+    if(description) serviceResponse.content.description = description;
+    if(image) serviceResponse.content.image = image;
+    return serviceResponse;
+};
 
 
 service.create = async({ title,description, image,user})=>{
@@ -136,4 +159,65 @@ service.addLike = async(post)=>{
     }
 }
 
+service.updateOneById= async(post,contentToUpdate)=>{
+    let serviceResponse={
+        success:true,
+        content:{
+            message:"post updated !"
+        }
+    }
+    try {
+        const updatedPost = await PostModel.findByIdAndUpdate(post._id,{
+            ...contentToUpdate,
+            $push:{
+                history:{
+                    title:post.title,
+                    description:post.description,
+                    image:post.image,
+                    modifiedAt: new Date
+                }
+            }
+        });
+
+        if(!updatedPost){
+            serviceResponse={
+                success:false,
+                content:{
+                    error:"postnot updated!"
+                }
+            }
+        }
+        return serviceResponse;
+    } catch (error) {
+        throw new Error("internal server error");
+    }
+};
+
+
+service.deleteOneById = async(_id)=>{
+    let serviceResponse={
+        success:true,
+        content:{
+            message:"post deleted :'D"
+        }
+    }
+
+    try {
+        const postDeleted = await PostModel.findByIdAndDelete(_id).exec();
+        if(!postDeleted){
+            serviceResponse={
+                success:false,
+                content:{
+                    error:"postnot deleted!"
+                }
+            } 
+        }
+
+        return serviceResponse;
+
+    } catch (error) {
+        debg(error)
+        throw new Error("Internal server error");
+    }
+}
 module.exports = service;
