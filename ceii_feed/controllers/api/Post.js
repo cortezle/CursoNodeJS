@@ -15,7 +15,7 @@ controller.create = async (req, res) => {
 		}
 		res.status(201).json(createPost.content);
 	}catch(error){
-		return res.status(500).json({error: error.message });
+		return res.status(500).json({error: "int s error" });
 	}
 	
 }
@@ -34,7 +34,7 @@ controller.findOneById = async(req,res)=>{
 		}
 		return res.status(200).json(postExists.content);
 	} catch (error) {
-		return res.status(500).json({error: error.message});
+		return res.status(500).json({error: "int s error"});
 	}
 };
 
@@ -51,7 +51,7 @@ controller.findAll = async(req,res)=>{
 		res.status(200).json(postsResponse.content);
 	} catch (error) {
 		return res.status(500).json({
-			error: error.message
+			error: "int s error"
 		})
 	}
 };
@@ -77,7 +77,7 @@ controller.addLike = async(req,res)=>{
 
 	} catch (error) {
 		return res.status(500).json({
-			error: error.message
+			error: "int s error"
 		});
 	}
 };

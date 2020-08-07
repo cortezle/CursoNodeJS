@@ -81,10 +81,34 @@ service.findOneUsernameEmail = async(username,email)=>{
         }
         return serviceResponse;
     } catch (error) {
-        throw new Error("internal server error");
+        throw error
     }
 }
 
+
+service.findOneById = async(_id)=>{
+    let serviceResponse = {
+        success:true,
+        content:{}
+    }
+
+    try {
+        const user = await UserModel.findById(_id).select("-hashedPassword").exec();
+
+        if(!user){
+            serviceResponse={
+                success:false,
+                content:{
+                    error:"user not found"
+                }
+            }
+        }else{
+            serviceResponse.content = user;
+        }
+    } catch (error) {
+        throw error
+    }
+};
 service.register = async({username,email,password,name,photo})=>{
     let serviceResponse = {
         success:true,
@@ -111,9 +135,10 @@ service.register = async({username,email,password,name,photo})=>{
         }
         return serviceResponse;
     } catch (error) {
-        throw new Error("internal server error service");
+        throw error
     }
 };
+
 
 
 module.exports = service;

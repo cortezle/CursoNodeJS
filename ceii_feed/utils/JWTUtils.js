@@ -9,7 +9,7 @@ tools.createToked = (_id)=>{
     };
 
     return jwt.sign(payLoad,secret,{
-        expiresIn:"1m",
+        expiresIn:process.env.JWTEXPTIME || "1m",
     });
 }
 
